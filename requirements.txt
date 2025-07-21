@@ -1,0 +1,7 @@
+PyMuPDF
+#"openai<1" for old openai functions
+openai
+flask
+Werkzeug
+python-docx
+pypandoc

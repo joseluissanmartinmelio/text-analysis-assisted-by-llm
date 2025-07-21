@@ -1,0 +1,11 @@
+.venvdesk/
+src/__pycache__/
+test/
+.venvport/
+prompts/question.txt
+prompts/public_managment_course.txt
+models_elections.txt
+diagrama.png
+api_keys.txt
+prompts/prompt_literature.txt
+prompts/random.txt

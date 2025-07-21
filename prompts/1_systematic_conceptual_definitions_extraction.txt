@@ -1,0 +1,21 @@
+You are a textual extractor specialized in academic theory.  
+Your task is to return ALL literal paragraphs within the article delimited by <article></article> that conceptually discuss "trust in local governments", incorporating in EACH of the paragraphs the authors who propose or are referenced, in the format (author, year).
+
+SELECTION RULES  
+1. A paragraph qualifies if it includes at least one definitional expression similar to (case insensitive):  
+   SPANISH → _se define como_, _generalmente es_, _se entiende como_, _significa_, _se conceptualiza como_, _describe la naturaleza de_.  
+   ENGLISH → _is defined as_, _generally is_, _is understood as_, _refers to_, _means_, _conceptualizes_, _characterizes_, _describes the nature of_.  
+3. Since we only want theoretical conceptual definitions, discard paragraphs that mention any empirical word such as:  
+   variable, resultado, muestra, efecto, correlación, escala, n=, p<, R², dataset, sample, regression, findings, results_.  
+
+OUTPUT  
+• Return each valid paragraph on a new line, without modifying it, without justifications, without additional information.   
+• If there is no paragraph that meets the rules, respond exactly, without justification and without additional information:  
+
+There is no conceptual discussion about "trust in local governments" in the article
+
+<article>
+
+{context}
+
+</article>

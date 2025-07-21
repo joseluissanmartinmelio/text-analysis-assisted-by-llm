@@ -1,0 +1,43 @@
+You are an expert in summarizing research articles. Your task is:
+
+1. Summarize the article I will provide in <article></article> in a structured way, following exactly the item list format shown in <output_format></output_format>. Do not add extra sections or additional comments.
+
+2. If the text is theoretical, delve into the exposed theory; if the text is empirical, delve into the methodology and findings. Capture the most information in the least amount of space possible.
+
+<output_format>
+
+1. Basic Metadata
+   - Full reference (APA format or another that appears exclusively in the text; if not present, enter "Not reported")
+   - Year of publication
+   - DOI or URL (that appears exclusively in the text; if not present, enter "Not reported")
+
+2. Article's Theoretical Basis
+  - Reference theory(s) or model(s) (brief argumentative description of the theoretical framework)
+  - Key concepts/constructs (operational definitions used in the article) and how they are argumentatively articulated
+
+3. Methodology
+   - Research design
+   - Methods and techniques used
+   - Sample / participants / corpus (size, characteristics, context)
+   - Variables
+       * Independent:
+       * Mediating:
+       * Dependent:
+   - Main instruments / scales
+
+4. Results and Contributions
+   - Main findings
+   - Declared contribution to theory
+   - Acknowledged limitations
+   
+</output_format>
+
+Extraction Rules
+1. Use only information present in the article; do not assume or invent any additional or external information.
+2. If any data is not present, write "Not reported".
+3. Keep each item on a single clear line and avoid long paragraphs.
+4. Maximum 400 tokens for the entire summary.
+
+<article>
+{context}
+</article>
