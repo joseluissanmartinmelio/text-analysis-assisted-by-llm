@@ -8,7 +8,7 @@ import os
 
 # DEEPSEEK
 client = OpenAI(
-    api_key= "", 
+    api_key= "sk-0d9a9f3d8ce443099fd60a7914d5cc82", 
     base_url="https://api.deepseek.com/v1" 
 ) # deepseek-reasoner
 
@@ -16,7 +16,7 @@ def ai_assistant(prompt: str, model: str = "deepseek-reasoner") -> str:
     response = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],
-	temperature = 0.3,
+	temperature = 0.1,
 	top_p = 1.0,
     #repetition_penalty = 1.10,
     #do_sample = True,

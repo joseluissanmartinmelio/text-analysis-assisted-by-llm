@@ -16,6 +16,15 @@
 - re  
 - textwrap  
 - os  
-- time  
+- time
+- flask
 
+## Sources used for create this project
 
+- https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics
+- https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Styling_web_forms
+- https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Advanced_form_styling
+- https://realpython.com/html-css-python/
+- https://realpython.com/python-web-applications/
+- https://j2logo.com/tutorial-flask-espanol/
+- AI assistant with a local [Deepseek-r1:14b](https://ollama.com/library/deepseek-r1:14b) model powered by RTX 4070 Ti SUPER
