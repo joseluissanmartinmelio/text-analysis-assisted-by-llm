@@ -2,13 +2,13 @@ from openai import OpenAI
 import os
 
 '''client = OpenAI(
-    api_key = ""
+    api_key = "Your api key"
 ) # o4-mini-2025-04-16'''
 
 
 # DEEPSEEK
 client = OpenAI(
-    api_key= "sk-0d9a9f3d8ce443099fd60a7914d5cc82", 
+    api_key= "Your api key", 
     base_url="https://api.deepseek.com/v1" 
 ) # deepseek-reasoner
 
@@ -18,9 +18,7 @@ def ai_assistant(prompt: str, model: str = "deepseek-reasoner") -> str:
         messages=[{"role": "user", "content": prompt}],
 	temperature = 0.1,
 	top_p = 1.0,
-    #repetition_penalty = 1.10,
-    #do_sample = True,
-    #seed= 42,
+    seed= 42,
     )
     return response.choices[0].message.content.strip()
 

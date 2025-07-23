@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - IA analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-color: #4a47a3; --secondary-color: #706fd3; --background-color: #f4f7f9; --container-bg: #ffffff; --text-color: #333333; --border-color: #e0e0e0; --font-family: 'Poppins', sans-serif; }
+        body { font-family: var(--font-family); margin: 0; background-color: var(--background-color); color: var(--text-color); }
+        .top-nav { background-color: var(--primary-color); padding: 0 2em; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .top-nav a { color: white; text-decoration: none; padding: 1em 1.5em; display: inline-block; font-weight: 500; }
+        .top-nav a.active { background-color: var(--secondary-color); }
+        .content-wrapper { padding: 2em; }
+        .container { max-width: 800px; margin: auto; background: var(--container-bg); padding: 2em; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        h1, h2, h3 { color: var(--primary-color); margin-top: 0; }
+        h1 { text-align: center; margin-bottom: 1.5em; }
+        form { display: flex; flex-direction: column; gap: 1.5em; }
+        label { font-weight: 500; }
+        input[type="file"], input[type="text"], select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background-color: #fafafa; box-sizing: border-box; }
+        button[type="submit"] { padding: 15px; font-size: 1em; font-weight: 600; color: white; background-color: var(--primary-color); border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.3s ease; }
+        button[type="submit"]:hover { background-color: var(--secondary-color); }
+        #loader { display: none; text-align: center; padding: 15px; font-size: 1em; font-weight: 600; color: var(--primary-color); background-color: rgba(74, 71, 163, 0.1); border-radius: 8px; }
+        .results { margin-top: 2.5em; border-top: 2px solid var(--border-color); padding-top: 1.5em; }
+        .results pre { background-color: #fdfdff; padding: 1.5em; border: 1px solid var(--border-color); border-radius: 8px; white-space: pre-wrap; word-wrap: break-word; font-size: 0.9em; line-height: 1.6; }
+        .flash-success { padding: 1em; background-color: #e8f5e9; color: #2e7d32; border: 1px solid #2e7d32; border-radius: 8px; margin-bottom: 1.5em; }
+        .flash-error { padding: 1em; background-color: #ffebee; color: #c62828; border: 1px solid #c62828; border-radius: 8px; margin-bottom: 1.5em; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}">Single file analysis</a>
+        <a href="{{ url_for('batch_process') }}" class="{{ 'active' if request.endpoint == 'batch_process' else '' }}">Batch processing</a>
+    </nav>
+    <main class="content-wrapper">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    <script>
+        const form = document.getElementById('analysis-form') || document.getElementById('batch-form');
+        if (form) {
+            const submitButton = document.getElementById('submit-button');
+            const loader = document.getElementById('loader');
+            form.addEventListener('submit', function() {
+                if (form.checkValidity()) {
+                    submitButton.style.display = 'none';
+                    loader.style.display = 'block';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

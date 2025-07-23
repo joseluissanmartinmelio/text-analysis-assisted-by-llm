@@ -1,193 +1,41 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document analysis assisted by LLM (Jośe San Martin)</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+{% extends "base.html" %}
 
-    <style>
-        :root {
-            --primary-color: #4a47a3;
-            --secondary-color: #706fd3;
-            --background-color: #f4f7f9;
-            --container-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #e0e0e0;
-            --font-family: 'Poppins', sans-serif;
-        }
+{% block title %}Single file analysis{% endblock %}
 
-        body {
-            font-family: var(--font-family);
-            margin: 0;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            padding: 2em;
-        }
+{% block content %}
+<h1>AI document analyzer</h1>
 
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: var(--container-bg);
-            padding: 2em;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        h1, h2, h3 {
-            color: var(--primary-color);
-            margin-top: 0;
-        }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 1.5em;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5em;
-        }
-
-        label {
-            font-weight: 500;
-        }
-        
-        input[type="file"], select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: #fafafa;
-        }
-
-        button[type="submit"] {
-            padding: 15px;
-            font-size: 1em;
-            font-weight: 600;
-            color: white;
-            background-color: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button[type="submit"]:hover {
-            background-color: var(--secondary-color);
-        }
-
-        #loader {
-            display: none;
-            text-align: center;
-            padding: 15px;
-            font-size: 1em;
-            font-weight: 600;
-            color: var(--primary-color);
-            background-color: rgba(74, 71, 163, 0.1);
-            border-radius: 8px;
-        }
-
-        .results {
-            margin-top: 2.5em;
-            border-top: 2px solid var(--border-color);
-            padding-top: 1.5em;
-        }
-
-        .results pre {
-            background-color: #fdfdff;
-            padding: 1.5em;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-size: 0.9em;
-            line-height: 1.6;
-        }
-
-        .results h3 {
-            border-left: 4px solid var(--secondary-color);
-            padding-left: 10px;
-        }
-
-        .flash-error {
-            padding: 1em;
-            background-color: #ffebee;
-            color: #c62828;
-            border: 1px solid #c62828;
-            border-radius: 8px;
-            margin-bottom: 1.5em;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Document analysis assisted by LLM (Jośe San Martin)</h1>
-
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <div class="flash-error">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-
-        <form id="analysis-form" method="post" enctype="multipart/form-data">
-            <div>
-                <label for="document">1. Document upload (.pdf, .docx, .txt):</label>
-                <input type="file" id="document" name="document" required>
-            </div>
-
-            <div>
-                <label for="prompt_selection">2. Prompt select:</label>
-                <select name="prompt_selection" id="prompt_selection" required>
-                    {% for prompt in prompts %}
-                        <option value="{{ prompt }}">{{ prompt }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <button id="submit-button" type="submit">Analyze document</button>
-            <div id="loader">Processing...</div>
-        </form>
-
-        {% if results %}
-        <div class="results">
-            <h2>Results</h2>
-            
-            <h3>AI results</h3>
-            <pre>{{ results.ai_response }}</pre>
-
-            <h3>Response statistics</h3>
-            <p><strong>Total words:</strong> {{ results.response_stats.total }} | <strong>Unique words:</strong> {{ results.response_stats.unique }}</p>
-
-            <br>
-
-            <h3>Original extracted text</h3>
-            <pre>{{ results.extracted_text }}</pre>
-            
-            <h3>Original text statistics</h3>
-            <p><strong>Total words:</strong> {{ results.text_stats.total }} | <strong>Unique words:</strong> {{ results.text_stats.unique }}</p>
-        </div>
-        {% endif %}
+<form id="analysis-form" method="post" enctype="multipart/form-data">
+    <div>
+        <label for="document">1. Upload your document (.pdf, .docx, .txt):</label>
+        <input type="file" id="document" name="document" required>
     </div>
 
-    <script>
-        const form = document.getElementById('analysis-form');
-        const submitButton = document.getElementById('submit-button');
-        const loader = document.getElementById('loader');
+    <div>
+        <label for="prompt_selection">2. Select a prompt:</label>
+        <select name="prompt_selection" id="prompt_selection" required>
+            {% for prompt in prompts %}
+                <option value="{{ prompt }}">{{ prompt }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-        form.addEventListener('submit', function() {
-            if (form.checkValidity()) {
-                submitButton.style.display = 'none'; 
-                loader.style.display = 'block'; 
-            }
-        });
-    </script>
+    <button id="submit-button" type="submit">Analyze document</button>
+    <div id="loader">Processing, please wait...</div>
+</form>
 
-</body>
-</html>
+{% if results %}
+<div class="results">
+    <h2>Resultados del Análisis</h2>
+    <h3>AI response</h3>
+    <pre>{{ results.ai_response }}</pre>
+    <h3>Response statistics</h3>
+    <p><strong>Total words:</strong> {{ results.response_stats.total }} | <strong>Unique words:</strong> {{ results.response_stats.unique }}</p>
+    <br>
+    <h3>Original extracted text</h3>
+    <pre>{{ results.extracted_text }}</pre>
+    <h3>Original text statistics</h3>
+    <p><strong>Total words:</strong> {{ results.text_stats.total }} | <strong>Unique words:</strong> {{ results.text_stats.unique }}</p>
+</div>
+{% endif %}
+{% endblock %}

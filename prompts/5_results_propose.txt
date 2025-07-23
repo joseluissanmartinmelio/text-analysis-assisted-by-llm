@@ -1,0 +1,66 @@
+You are an expert in empirical social sciences. Your task is:
+
+1. Analyze the argument presented in the <article></article>.
+2. Analyze the data structure presented in <data></data>.
+3. Propose an order for presenting the data in the analysis and results section, addressing the following:
+    a. Whether to present general or specific data first.
+    b. What elements to present: simple tables, actor-position maps, clusters, median differences, etc.
+    c. Whether to use more charts or more tables.
+4. Your output should only be the requested proposal covering the 3 points described. Please respond in **English**.
+
+
+<data>
+Num	Nombre	Sección
+1	ID	General
+2	Edad	General
+3	Sexo	General
+5	En su opinión, ¿qué tan extendida cree usted que es la corrupción en el municipio?	General
+6	De cada 10 vecinos adultos de la comuna, ¿cuántos cree usted que responderían “bastante extendida” o “muy extendida”?	General
+7	¿Cuál de los siguientes ámbitos considera que tiene más riesgo de corrupción en el municipio?	General
+8	En los últimos dos años, ¿usted ha conocido o sospechado de algún acto de corrupción en el municipio?	General
+4	Partido	Específica
+9	Durante su período como concejal, ¿ha identificado situaciones que podrían considerarse poco transparentes en la gestión municipal?	Específica
+10	¿Con qué frecuencia recibe información suficiente y detallada para ejercer adecuadamente su rol de fiscalización?	Específica
+11	¿Cómo caracterizaría la toma de decisiones del alcalde según sus niveles de discrecionalidad?	Específica
+12	El acceso a la información municipal para concejales es suficiente para detectar posibles Irregularidades	Específica
+13	Algunas decisiones relevantes del municipio se han tomado sin consulta efectiva al Concejo.	Específica
+14	En mi experiencia, hay prácticas en la gestión municipal que podrían generar conflictos de interés.	Específica
+15	Los mecanismos de control interno del municipio funcionan adecuadamente para prevenir irregularidades.	Específica
+16	El funcionamiento del Concejo Municipal favorece un control efectivo sobre la gestión del Municipio.	Específica
+17	actor	Específica
+18	En su rol como integrante del COSOC, ¿ha tenido conocimiento o sospecha de prácticas poco transparentes en el municipio?	Específica
+19	¿Considera que el municipio proporciona al COSOC información suficiente y oportuna para cumplir su función de participación ciudadana?	Específica
+20	¿Con qué frecuencia percibe que las decisiones municipales consideran efectivamente las recomendaciones o inquietudes planteadas por el COSOC?	Específica
+21	El rol del COSOC es considerado por las autoridades municipales en la toma de decisiones sobre temas de integridad	Específica
+22	La información que entrega el municipio al COSOC permite identificar posibles riesgos de corrupción	Específica
+23	En mi experiencia, existen espacios donde las decisiones municipales se toman sin suficiente transparencia y alta discresionalidad	Específica
+24	Desde el COSOC, el difícil verificar cómo se usan los recursos públicos a nivel local	Específica
+25	Las reuniones del COSOC permiten levantar preocupaciones ciudadanas sobre prácticas irregulares o poco éticas	Específica
+26	Hora de inicio	Específica
+27	Hora de finalización	Específica
+28	Correo electrónico	Específica
+29	Nombre	Específica
+30	¿Considera que, en general, la gestión interna del municipio se desarrolla conforme a principios de transparencia, legalidad e imparcialidad?	Específica
+31	¿Con qué frecuencia ha sentido presiones externas o internas para tomar decisiones que se alejan de los procedimientos establecidos?	Específica
+32	En su experiencia, ¿con qué frecuencia ha escuchado comentarios o percepciones informales sobre posibles irregularidades o conductas poco íntegras dentro del municipio, independientemente de su ve...	Específica
+33	En mi unidad, se respetan los procedimientos administrativos establecidos.	Específica
+34	A veces, para mejorar la eficiencia, es común que se tomen decisiones sin seguir los conductos regulares	Específica
+35	El municipio promueve una cultura organizacional basada en la probidad y la transparencia.	Específica
+36	Las oportunidades de capacitación sobre integridad y ética son suficientes y útiles.	Específica
+37	En el municipio, reportar irregularidades puede tener consecuencias negativas para quien lo hace.	Específica
+38	¿Ha sentido alguna vez que el municipio trata de forma preferente a algunas organizaciones o dirigentes?	Específica
+39	¿Alguna vez le han sugerido que para obtener apoyo del municipio es mejor “hablar con alguien conocido” o “conseguirse un contacto”?	Específica
+40	Por lo que escucha, ¿la comunidad del barrio ha expresado sospechas sobre cómo se entregan ayudas o se hacen favores en el municipio?	Específica
+41	En mi experiencia, es común que se recomiende tener “buenos contactos” para que el municipio atienda más rápido una solicitud	Específica
+42	La Junta de Vecinos rara vez recibe explicaciones claras sobre por qué se aprueban o rechazan ciertos apoyos municipales	Específica
+43	En el barrio, muchas personas desconfían de cómo el municipio reparte ayudas o recursos	Específica
+44	Los vecinos conocen bien las formas para reclamar o denunciar actos de faltas a la integridad	Específica
+45	Algunas acciones del municipio pueden no ser legales, pero se consideran “normales” o habituales en la relación con las organizaciones	Específica
+</data>
+
+
+<article>
+
+{context}
+
+</article>

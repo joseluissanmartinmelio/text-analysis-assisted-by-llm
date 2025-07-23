@@ -9,20 +9,14 @@ from utils import save_to_file
 from prompt_loader import load_prompt
 
 CONFIG = {
-    # Folder containing the documents to process (only one file type per run)
     "FOLDER_PATH": "",
 
-    # File extension to process: ".pdf", ".txt", or ".docx"
     "FILE_EXTENSION": ".pdf",
 
-    # Base prompt that will be combined with the text of each document
     "PROMPT_PATH": "",
 
-    # Output folder for the MD summaries
     "OUTPUT_DIR": "",
 }
-# --------------------------------------------------------------------------- #
-
 
 def select_extractor(extension: str):
 

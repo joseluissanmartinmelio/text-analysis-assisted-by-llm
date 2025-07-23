@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Batch processing{% endblock %}
+
+{% block content %}
+<h1>Batch processing</h1>
+<p>Processes a complete folder of documents. The results will be saved in the output folder you specify on the server.</p>
+
+<form id="batch-form" method="post">
+    <div>
+        <label for="folder_path">1. Input folder path:</label>
+        <input type="text" id="folder_path" name="folder_path" required placeholder="Example: /Users/tu_usuario/Documents/Articulos">
+    </div>
+
+    <div>
+        <label for="output_dir">2. Output folder path:</label>
+        <input type="text" id="output_dir" name="output_dir" required placeholder="Example: /Users/tu_usuario/Documents/Resultados">
+    </div>
+
+    <div>
+        <label for="file_extension">3. File type to process:</label>
+        <select name="file_extension" id="file_extension" required>
+            <option value=".pdf">PDF (.pdf)</option>
+            <option value=".docx">Word (.docx)</option>
+            <option value=".txt">Texto (.txt)</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="prompt_selection">4. Select a prompt:</label>
+        <select name="prompt_selection" id="prompt_selection" required>
+            {% for prompt in prompts %}
+                <option value="{{ prompt }}">{{ prompt }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button id="submit-button" type="submit">Start batch process</button>
+    <div id="loader">Starting process... This may take several minutes. The page will notify you once it begins.</div>
+</form>
+
+{% endblock %}
