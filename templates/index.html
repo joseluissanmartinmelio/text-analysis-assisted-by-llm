@@ -1,41 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+
 {% extends "base.html" %}
 
 {% block title %}Single file analysis{% endblock %}
 
 {% block content %}
-<h1>AI document analyzer</h1>
-
-<form id="analysis-form" method="post" enctype="multipart/form-data">
-    <div>
-        <label for="document">1. Upload your document (.pdf, .docx, .txt):</label>
-        <input type="file" id="document" name="document" required>
-    </div>
-
-    <div>
-        <label for="prompt_selection">2. Select a prompt:</label>
-        <select name="prompt_selection" id="prompt_selection" required>
-            {% for prompt in prompts %}
-                <option value="{{ prompt }}">{{ prompt }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <button id="submit-button" type="submit">Analyze document</button>
-    <div id="loader">Processing, please wait...</div>
-</form>
-
-{% if results %}
-<div class="results">
-    <h2>Resultados del Análisis</h2>
-    <h3>AI response</h3>
-    <pre>{{ results.ai_response }}</pre>
-    <h3>Response statistics</h3>
-    <p><strong>Total words:</strong> {{ results.response_stats.total }} | <strong>Unique words:</strong> {{ results.response_stats.unique }}</p>
-    <br>
-    <h3>Original extracted text</h3>
-    <pre>{{ results.extracted_text }}</pre>
-    <h3>Original text statistics</h3>
-    <p><strong>Total words:</strong> {{ results.text_stats.total }} | <strong>Unique words:</strong> {{ results.text_stats.unique }}</p>
-</div>
-{% endif %}
+    <h1>AI document analyzer</h1>
+    
+    <form id="analysis-form" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="document">1. Upload your document (.pdf, .docx, .txt):</label>
+            <input type="file" id="document" name="document" required>
+        </div>
+        
+        <div>
+            <label for="prompt_selection">2. Select a prompt:</label>
+            <select name="prompt_selection" id="prompt_selection" required>
+                {% for prompt in prompts %}
+                    <option value="{{ prompt }}">{{ prompt }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div>
+            <label>3. Select AI Model:</label>
+            <div class="ai-model-buttons">
+                <button type="button" 
+                        class="model-btn" 
+                        data-model="claude" 
+                        onclick="selectModel('claude')">
+                    Claude 4
+                </button>
+                <button type="button" 
+                        class="model-btn selected" 
+                        data-model="deepseek" 
+                        onclick="selectModel('deepseek')">
+                    DeepSeek R1
+                </button>
+                <button type="button" 
+                        class="model-btn" 
+                        data-model="openai_o3" 
+                        onclick="selectModel('openai_o3')">
+                    OpenAI O3
+                </button>
+                <button type="button" 
+                        class="model-btn" 
+                        data-model="openai_o4_mini" 
+                        onclick="selectModel('openai_o4_mini')">
+                    OpenAI O4 Mini
+                </button>
+            </div>
+            <input type="hidden" 
+                   id="selected_model" 
+                   name="selected_model" 
+                   value="deepseek" 
+                   required>
+        </div>
+        
+        <button id="submit-button" type="submit">Analyze document</button>
+        
+        <div id="loader">Processing, please wait...</div>
+    </form>
+    
+    {% if results %}
+        <div class="results">
+            <h2>Resultados del Análisis</h2>
+            
+            <h3>AI response</h3>
+            <pre>{{ results.ai_response }}</pre>
+            
+            <h3>Response statistics</h3>
+            <p>
+                <strong>Total words:</strong> {{ results.response_stats.total }} | 
+                <strong>Unique words:</strong> {{ results.response_stats.unique }}
+            </p>
+            
+            <br>
+            
+            <h3>Original extracted text</h3>
+            <pre>{{ results.extracted_text }}</pre>
+            
+            <h3>Original text statistics</h3>
+            <p>
+                <strong>Total words:</strong> {{ results.text_stats.total }} | 
+                <strong>Unique words:</strong> {{ results.text_stats.unique }}
+            </p>
+        </div>
+    {% endif %}
+    
+    <style>
+        .ai-model-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .model-btn {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .model-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .model-btn.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+    </style>
+    
+    <script>
+        function selectModel(model) {
+            document.getElementById('selected_model').value = model;
+            console.log('Model selected:', model);
+            
+            document.querySelectorAll('.model-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            document.querySelector(`[data-model="${model}"]`).classList.add('selected');
+        }
+        
+        document.getElementById('analysis-form').addEventListener('submit', function(e) {
+            const selectedModel = document.getElementById('selected_model').value;
+            console.log('Form submit - Selected model:', selectedModel);
+            
+            if (!selectedModel) {
+                e.preventDefault();
+                alert('Please select an AI model before analyzing.');
+            }
+        });
+        
+        window.addEventListener('load', function() {
+            console.log('Initial model value:', document.getElementById('selected_model').value);
+        });
+    </script>
 {% endblock %}

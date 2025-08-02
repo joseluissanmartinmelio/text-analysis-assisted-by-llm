@@ -4,19 +4,22 @@ from pathlib import Path
 from pdf_reader import extract_text_without_footer_header as extract_text_pdf
 from docx_reader import extract_text_without_footer_header as extract_text_docx
 from txt_reader import extract_text_without_footer_header as extract_text_txt
-from ai_module import ai_assistant
+
+from ai_claude_4 import ai_assistant as ai_assistant_claude
+from ai_deepseek_r1 import ai_assistant as ai_assistant_deepseek
+from ai_openai_o3 import ai_assistant as ai_assistant_openai_o3
+from ai_openai_o4_mini import ai_assistant as ai_assistant_openai_o4_mini
+
 from utils import save_to_file
 from prompt_loader import load_prompt
 
 CONFIG = {
     "FOLDER_PATH": "",
-
     "FILE_EXTENSION": ".pdf",
-
     "PROMPT_PATH": "",
-
     "OUTPUT_DIR": "",
 }
+
 
 def select_extractor(extension: str):
 
@@ -40,7 +43,7 @@ def process_file(file_path: Path, extractor, prompt_path: Path, output_dir: Path
 
     prompt = load_prompt(str(prompt_path), text)
 
-    response = ai_assistant(prompt)
+    response = ai_assistant_deepseek(prompt)
 
     output_path = build_output_path(file_path, output_dir)
 

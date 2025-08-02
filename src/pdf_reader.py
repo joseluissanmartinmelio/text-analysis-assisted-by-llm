@@ -1,5 +1,6 @@
 import fitz
 
+
 def extract_text_without_footer_header(pdf_path):
     doc = fitz.open(pdf_path)
     full_text = []

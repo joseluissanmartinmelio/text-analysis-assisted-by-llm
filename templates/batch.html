@@ -1,42 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+
 {% extends "base.html" %}
 
 {% block title %}Batch processing{% endblock %}
 
 {% block content %}
-<h1>Batch processing</h1>
-<p>Processes a complete folder of documents. The results will be saved in the output folder you specify on the server.</p>
-
-<form id="batch-form" method="post">
-    <div>
-        <label for="folder_path">1. Input folder path:</label>
-        <input type="text" id="folder_path" name="folder_path" required placeholder="Example: /Users/tu_usuario/Documents/Articulos">
-    </div>
-
-    <div>
-        <label for="output_dir">2. Output folder path:</label>
-        <input type="text" id="output_dir" name="output_dir" required placeholder="Example: /Users/tu_usuario/Documents/Resultados">
-    </div>
-
-    <div>
-        <label for="file_extension">3. File type to process:</label>
-        <select name="file_extension" id="file_extension" required>
-            <option value=".pdf">PDF (.pdf)</option>
-            <option value=".docx">Word (.docx)</option>
-            <option value=".txt">Texto (.txt)</option>
-        </select>
-    </div>
-
-    <div>
-        <label for="prompt_selection">4. Select a prompt:</label>
-        <select name="prompt_selection" id="prompt_selection" required>
-            {% for prompt in prompts %}
-                <option value="{{ prompt }}">{{ prompt }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <button id="submit-button" type="submit">Start batch process</button>
-    <div id="loader">Starting process... This may take several minutes. The page will notify you once it begins.</div>
-</form>
-
+    <h1>Batch processing</h1>
+    
+    <p>Processes a complete folder of documents. The results will be saved in the output folder you specify on the server.</p>
+    
+    <form id="batch-form" method="post">
+        <div>
+            <label for="folder_path">1. Input folder path:</label>
+            <input type="text" 
+                   id="folder_path" 
+                   name="folder_path" 
+                   required 
+                   placeholder="Example: /Users/tu_usuario/Documents/Articulos">
+        </div>
+        
+        <div>
+            <label for="output_dir">2. Output folder path:</label>
+            <input type="text" 
+                   id="output_dir" 
+                   name="output_dir" 
+                   required 
+                   placeholder="Example: /Users/tu_usuario/Documents/Resultados">
+        </div>
+        
+        <div>
+            <label for="file_extension">3. File type to process:</label>
+            <select name="file_extension" id="file_extension" required>
+                <option value=".pdf">PDF (.pdf)</option>
+                <option value=".docx">Word (.docx)</option>
+                <option value=".txt">Texto (.txt)</option>
+            </select>
+        </div>
+        
+        <div>
+            <label for="prompt_selection">4. Select a prompt:</label>
+            <select name="prompt_selection" id="prompt_selection" required>
+                {% for prompt in prompts %}
+                    <option value="{{ prompt }}">{{ prompt }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div>
+            <label>5. Select AI Model:</label>
+            <div class="ai-model-buttons">
+                <button type="button" 
+                        class="model-btn" 
+                        data-model="claude" 
+                        onclick="selectModel('claude')">
+                    Claude 4
+                </button>
+                <button type="button" 
+                        class="model-btn selected" 
+                        data-model="deepseek" 
+                        onclick="selectModel('deepseek')">
+                    DeepSeek R1
+                </button>
+                <button type="button" 
+                        class="model-btn" 
+                        data-model="openai_o3" 
+                        onclick="selectModel('openai_o3')">
+                    OpenAI O3
+                </button>
+                <button type="button" 
+                        class="model-btn" 
+                        data-model="openai_o4_mini" 
+                        onclick="selectModel('openai_o4_mini')">
+                    OpenAI O4 Mini
+                </button>
+            </div>
+            <input type="hidden" 
+                   id="selected_model" 
+                   name="selected_model" 
+                   value="deepseek" 
+                   required>
+        </div>
+        
+        <button id="submit-button" type="submit">Start batch process</button>
+        
+        <div id="loader">
+            Starting process... This may take several minutes. The page will notify you once it begins.
+        </div>
+    </form>
+    
+    <style>
+        .ai-model-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .model-btn {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .model-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .model-btn.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+    </style>
+    
+    <script>
+        function selectModel(model) {
+            document.getElementById('selected_model').value = model;
+            
+            document.querySelectorAll('.model-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            document.querySelector(`[data-model="${model}"]`).classList.add('selected');
+        }
+        
+        document.getElementById('batch-form').addEventListener('submit', function(e) {
+            const selectedModel = document.getElementById('selected_model').value;
+            
+            if (!selectedModel) {
+                e.preventDefault();
+                alert('Please select an AI model before starting the batch process.');
+            }
+        });
+    </script>
 {% endblock %}

@@ -1,5 +1,6 @@
 from docx import Document
 
+
 def extract_text_without_footer_header(docx_path: str) -> str:
     doc = Document(docx_path)
 

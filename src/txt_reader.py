@@ -1,7 +1,8 @@
 from pathlib import Path
 
+
 def extract_text_without_footer_header(txt_path: str) -> str:
-    
+
     txt_file = Path(txt_path)
 
     if not txt_file.is_file():

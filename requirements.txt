@@ -5,3 +5,4 @@ flask
 Werkzeug
 python-docx
 pypandoc
+black

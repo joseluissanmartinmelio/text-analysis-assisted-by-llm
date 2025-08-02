@@ -5,10 +5,11 @@ import sys
 
 path = ""
 
-SOURCE_FOLDER_PATH = f'{path}'
+SOURCE_FOLDER_PATH = f"{path}"
 
-CONSOLIDATED_MD_FILE = f'{path}/consolidado.md'
-CONSOLIDATED_PDF_FILE = f'{path}/consolidado.pdf'
+CONSOLIDATED_MD_FILE = f"{path}/consolidado.md"
+CONSOLIDATED_PDF_FILE = f"{path}/consolidado.pdf"
+
 
 def create_consolidated_markdown(source_path, output_file):
 
@@ -17,7 +18,9 @@ def create_consolidated_markdown(source_path, output_file):
         print(f"Error: The directory '{source_path}' does not exist.")
         sys.exit(1)
 
-    markdown_files = sorted([f for f in source_dir.glob('*.md') if f.name != Path(output_file).name])
+    markdown_files = sorted(
+        [f for f in source_dir.glob("*.md") if f.name != Path(output_file).name]
+    )
 
     if not markdown_files:
         print(f"No .md files found in '{source_path}'.")
@@ -25,11 +28,11 @@ def create_consolidated_markdown(source_path, output_file):
 
     print(f".md files found: {[f.name for f in markdown_files]}")
 
-    with open(output_file, 'w', encoding='utf-8') as outfile:
+    with open(output_file, "w", encoding="utf-8") as outfile:
         for idx, md_file in enumerate(markdown_files, start=1):
             print(f"Processing: {md_file.name}")
             outfile.write(f"# text {idx}\n\n")
-            outfile.write(md_file.read_text(encoding='utf-8'))
+            outfile.write(md_file.read_text(encoding="utf-8"))
             outfile.write("\n\n---\n\n")
 
     print(f"\nConsolidated file '{output_file}' created successfully.")
@@ -41,9 +44,9 @@ def convert_markdown_to_pdf(md_file, pdf_file):
     try:
         pypandoc.convert_file(
             md_file,
-            'pdf',
+            "pdf",
             outputfile=pdf_file,
-            extra_args=['--pdf-engine=xelatex', '-V', 'geometry:margin=1in']
+            extra_args=["--pdf-engine=xelatex", "-V", "geometry:margin=1in"],
         )
         print(f"PDF file '{pdf_file}' created successfully.")
     except OSError:
@@ -65,5 +68,5 @@ def main():
         convert_markdown_to_pdf(CONSOLIDATED_MD_FILE, CONSOLIDATED_PDF_FILE)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
