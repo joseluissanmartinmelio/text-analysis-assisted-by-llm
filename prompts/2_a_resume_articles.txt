@@ -26,3 +26,9 @@ Writing guidelines:
 - Use only information explicitly present in the article; do not add external knowledge
 
 Note: You will only show the final paragraphs, not the systematic extraction process.
+
+<articles>
+
+{context}
+
+</articles>
