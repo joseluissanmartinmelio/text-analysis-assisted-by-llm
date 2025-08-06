@@ -25,7 +25,7 @@ echo Creating executable...
 echo.
 
 REM Compile directly with all parameters
-pyinSTALLMller ^
+pyinstaller ^
     --name STALLM ^
     --onedir ^
     --console ^
