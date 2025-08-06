@@ -12,14 +12,24 @@ if not exist launcher.py (
     exit /b 1
 )
 
+REM Check for icon file (optional)
+set ICON_PARAM=
+if exist "icon.ico" (
+    echo Icon file found: icon.ico
+    set ICON_PARAM=--icon icon.ico
+) else (
+    echo No icon file found. You can add an icon.ico file to include an icon.
+)
+
 echo Creating executable...
 echo.
 
 REM Compile directly with all parameters
-pyinstaller ^
-    --name TextAnalysisLLM ^
+pyinSTALLMller ^
+    --name STALLM ^
     --onedir ^
     --console ^
+    %ICON_PARAM% ^
     --add-data "templates;templates" ^
     --add-data "prompts;prompts" ^
     --add-data "src;src" ^
@@ -43,15 +53,15 @@ pyinstaller ^
     launcher.py
 
 echo.
-if exist "dist\TextAnalysisLLM\TextAnalysisLLM.exe" (
+if exist "dist\STALLM\STALLM.exe" (
     echo ====================================
     echo  COMPILATION SUCCESSFUL!
     echo ====================================
     echo.
-    echo Executable at: dist\TextAnalysisLLM\TextAnalysisLLM.exe
+    echo Executable at: dist\STALLM\STALLM.exe
     echo.
     echo You can test the application by running:
-    echo dist\TextAnalysisLLM\TextAnalysisLLM.exe
+    echo dist\STALLM\STALLM.exe
     echo.
 ) else (
     echo ====================================
