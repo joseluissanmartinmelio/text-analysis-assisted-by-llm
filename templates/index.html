@@ -6,7 +6,7 @@
 {% block title %}Single file analysis{% endblock %}
 
 {% block content %}
-    <h1>AI document analyzer</h1>
+    <h1>AI document analyzer by José San Martin Melio</h1>
     
     <form id="analysis-form" method="post" enctype="multipart/form-data">
         <div>
@@ -23,8 +23,36 @@
             </select>
         </div>
         
+        <div class="optional-fields">
+            <h3>Optional fields (only if used in the selected prompt)</h3>
+            
+            <div>
+                <label for="question">Question (optional):</label>
+                <input type="text" 
+                       id="question" 
+                       name="question" 
+                       placeholder="Enter a specific question if your prompt uses {question}">
+            </div>
+            
+            <div>
+                <label for="theme">Theme (optional):</label>
+                <input type="text" 
+                       id="theme" 
+                       name="theme" 
+                       placeholder="Enter a theme if your prompt uses {theme}">
+            </div>
+            
+            <div>
+                <label for="keyword">Keyword (optional):</label>
+                <input type="text" 
+                       id="keyword" 
+                       name="keyword" 
+                       placeholder="Enter a keyword if your prompt uses {keyword}">
+            </div>
+        </div>
+        
         <div>
-            <label>3. Select AI Model:</label>
+            <label>4. Select AI Model:</label>
             <div class="ai-model-buttons">
                 <button type="button" 
                         class="model-btn" 
@@ -90,6 +118,21 @@
     {% endif %}
     
     <style>
+        .optional-fields {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin: 20px 0;
+        }
+        
+        .optional-fields h3 {
+            margin-top: 0;
+            color: #6c757d;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        
         .ai-model-buttons {
             display: flex;
             gap: 10px;
@@ -109,9 +152,9 @@
         }
         
         .model-btn.selected {
-            background-color: #007bff;
-            color: white;
-            border-color: #0056b3;
+            background-color: #D99789;
+            color: #F2F2F0;
+            border-color: #D97059;
         }
     </style>
     

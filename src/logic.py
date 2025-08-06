@@ -20,7 +20,6 @@ AI_MODELS = {
 
 
 def get_ai_assistant(model_name):
-    """Retorna la función de AI assistant según el modelo seleccionado"""
     if model_name not in AI_MODELS:
         raise ValueError(
             f"Model {model_name} not supported. Available models: {list(AI_MODELS.keys())}"
@@ -28,7 +27,7 @@ def get_ai_assistant(model_name):
     return AI_MODELS[model_name]
 
 
-def run_analysis(uploaded_file, prompt_template_text, selected_model):
+def run_analysis(uploaded_file, prompt_template_text, selected_model, question="", theme="", keyword=""):
     results = {}
     temp_filename = uploaded_file.filename
     uploaded_file.save(temp_filename)
@@ -48,7 +47,23 @@ def run_analysis(uploaded_file, prompt_template_text, selected_model):
         results["text_stats"] = count_words(text)
 
         prompt_template = textwrap.dedent(prompt_template_text)
-        final_prompt = prompt_template.format(context=text)
+        
+        format_dict = {
+            'context': text,
+            'question': question,
+            'theme': theme,
+            'keyword': keyword
+        }
+        
+        import re
+        variables_in_template = re.findall(r'\{(\w+)\}', prompt_template)
+        
+        filtered_dict = {}
+        for var in variables_in_template:
+            if var in format_dict:
+                filtered_dict[var] = format_dict[var]
+        
+        final_prompt = prompt_template.format(**filtered_dict)
 
         ai_assistant = get_ai_assistant(selected_model)
         response = ai_assistant(final_prompt)
@@ -78,13 +93,28 @@ def build_output_path(input_file: Path, output_dir: Path) -> Path:
 
 
 def process_single_file_batch(
-    file_path: Path, extractor, prompt_template: str, output_dir: Path, ai_assistant
+    file_path: Path, extractor, prompt_template: str, output_dir: Path, ai_assistant, question="", theme="", keyword=""
 ):
     print(f"Procesando: {file_path.name}...")
     try:
         text = extractor(str(file_path))
 
-        final_prompt = textwrap.dedent(prompt_template).format(context=text)
+        format_dict = {
+            'context': text,
+            'question': question,
+            'theme': theme,
+            'keyword': keyword
+        }
+        
+        import re
+        variables_in_template = re.findall(r'\{(\w+)\}', prompt_template)
+        
+        filtered_dict = {}
+        for var in variables_in_template:
+            if var in format_dict:
+                filtered_dict[var] = format_dict[var]
+        
+        final_prompt = textwrap.dedent(prompt_template).format(**filtered_dict)
         response = ai_assistant(final_prompt)
 
         output_path = build_output_path(file_path, output_dir)
@@ -102,6 +132,9 @@ def process_folder_batch(
     file_extension: str,
     prompt_template: str,
     selected_model: str,
+    question: str = "",
+    theme: str = "",
+    keyword: str = "",
 ):
     folder = Path(folder_path).expanduser()
     output_path = Path(output_dir).expanduser()
@@ -114,7 +147,6 @@ def process_folder_batch(
 
     extractor = select_extractor(ext)
 
-    # Obtener la función AI assistant correcta según el modelo seleccionado
     ai_assistant = get_ai_assistant(selected_model)
 
     files_to_process = sorted([p for p in folder.iterdir() if p.suffix.lower() == ext])
@@ -127,7 +159,7 @@ def process_folder_batch(
 
     for file_path in files_to_process:
         process_single_file_batch(
-            file_path, extractor, prompt_template, output_path, ai_assistant
+            file_path, extractor, prompt_template, output_path, ai_assistant, question, theme, keyword
         )
         files_processed_count += 1
 

@@ -12,7 +12,6 @@ CONSOLIDATED_PDF_FILE = f"{path}/consolidado.pdf"
 
 
 def create_consolidated_markdown(source_path, output_file):
-
     source_dir = Path(source_path)
     if not source_dir.is_dir():
         print(f"Error: The directory '{source_path}' does not exist.")
@@ -29,9 +28,12 @@ def create_consolidated_markdown(source_path, output_file):
     print(f".md files found: {[f.name for f in markdown_files]}")
 
     with open(output_file, "w", encoding="utf-8") as outfile:
-        for idx, md_file in enumerate(markdown_files, start=1):
+        for md_file in markdown_files:
             print(f"Processing: {md_file.name}")
-            outfile.write(f"# text {idx}\n\n")
+            
+            title = md_file.stem
+            
+            outfile.write(f"# {title}\n\n")
             outfile.write(md_file.read_text(encoding="utf-8"))
             outfile.write("\n\n---\n\n")
 

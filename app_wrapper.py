@@ -1,11 +1,40 @@
+import os
+import sys
+from pathlib import Path
+
+if getattr(sys, "frozen", False):
+    BASE_DIR = Path(sys._MEIPASS)
+    RUNTIME_DIR = Path(os.path.dirname(sys.executable))
+else:
+    BASE_DIR = Path(__file__).parent
+    RUNTIME_DIR = BASE_DIR
+
+sys.path.insert(0, str(BASE_DIR))
+sys.path.insert(0, str(BASE_DIR / "src"))
+
+os.chdir(BASE_DIR)
+
+config_path = RUNTIME_DIR / "config.ini"
+if config_path.exists():
+    with open(config_path, "r") as f:
+        for line in f:
+            if "OPENROUTER_API_KEY" in line:
+                key = line.split("=")[1].strip()
+                os.environ["OPENROUTER_API_KEY"] = key
+                break
+
 from flask import Flask, render_template, request, flash, redirect, url_for
 import os
 from src.logic import run_analysis, process_folder_batch
 
-app = Flask(__name__)
-app.secret_key = "secret-bot-kla"
+app = Flask(
+    __name__,
+    template_folder=str(BASE_DIR / "templates"),
+    static_folder=str(BASE_DIR / "static") if (BASE_DIR / "static").exists() else None,
+)
 
-PROMPTS_DIR = "prompts"
+app.secret_key = "secret-bot-kla"
+PROMPTS_DIR = str(BASE_DIR / "prompts")
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -76,10 +105,7 @@ def batch_process():
             )
         except Exception as e:
             flash(f"Error starting the process: {e}", "error")
-            return redirect(url_for("batch_process"))
+
+        return redirect(url_for("batch_process"))
 
     return render_template("batch.html", prompts=prompt_files)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

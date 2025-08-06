@@ -37,6 +37,7 @@ Extraction Rules
 2. If any data is not present, write "Not reported".
 3. Keep each item on a single clear line and avoid long paragraphs.
 4. Maximum 400 tokens for the entire summary.
+5. Please respond in Spanish.
 
 <article>
 {context}

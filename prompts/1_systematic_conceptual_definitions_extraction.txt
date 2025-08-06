@@ -1,21 +1,26 @@
 You are a textual extractor specialized in academic theory.  
-Your task is to return ALL literal paragraphs within the article delimited by <article></article> that conceptually discuss "trust in local governments", incorporating in EACH of the paragraphs the authors who propose or are referenced, in the format (author, year).
+Your task is to return ALL literal paragraphs within the article delimited by <article></article> that conceptually discuss definitions of {keyword}, incorporating in EACH of the paragraphs the authors who propose or are referenced, in the format (author, year).
 
 SELECTION RULES  
-1. A paragraph qualifies if it includes at least one definitional expression similar to (case insensitive):  
-   SPANISH → _se define como_, _generalmente es_, _se entiende como_, _significa_, _se conceptualiza como_, _describe la naturaleza de_.  
-   ENGLISH → _is defined as_, _generally is_, _is understood as_, _refers to_, _means_, _conceptualizes_, _characterizes_, _describes the nature of_.  
-3. Since we only want theoretical conceptual definitions, discard paragraphs that mention any empirical word such as:  
-   variable, resultado, muestra, efecto, correlación, escala, n=, p<, R², dataset, sample, regression, findings, results_.  
+1. A paragraph qualifies if it includes at least one definitional expression similar to (case insensitive):  
+   SPANISH → *se define como*, *generalmente es*, *se entiende como*, *significa*, *se conceptualiza como*, *describe la naturaleza de*  
+   ENGLISH → *is defined as*, *generally is*, *is understood as*, *refers to*, *means*, *conceptualizes*, *characterizes*, *describes the nature of*
+
+2. The paragraph must be defining specifically {keyword}, not just related or component concepts.
+
+3. Since we only want theoretical conceptual definitions, discard paragraphs that mention any empirical word such as:  
+   variable, resultado, muestra, efecto, correlación, escala, n=, p<, R², dataset, sample, regression, findings, results
 
 OUTPUT  
-• Return each valid paragraph on a new line, without modifying it, without justifications, without additional information.   
-• If there is no paragraph that meets the rules, respond exactly, without justification and without additional information:  
-
-There is no conceptual discussion about "trust in local governments" in the article
+- Extracts the title of the article, the authors, the year of publication, and the doi if available (if any element is not available it mentions: Not available), generally this information is at the beginning of the article. Use this format:
+   a. Title: 
+   b. Authors:
+   c. Year:
+   d. DOI:
+- Return each valid paragraph on a new line, without modifying it, without justifications, without additional information.   
+- If there is no paragraph that meets the rules, respond exactly, without justification and without additional information:  
+There is no conceptual discussion about definitions of {keyword} in the article
 
 <article>
-
 {context}
-
 </article>
