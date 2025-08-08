@@ -3,43 +3,43 @@
 
 {% extends "base.html" %}
 
-{% block title %}Batch processing{% endblock %}
+{% block title %}batch processing{% endblock %}
 
 {% block content %}
-    <h1>Batch processing</h1>
+    <h1>batch document processing</h1>
     
-    <p>Processes a complete folder of documents. The results will be saved in the output folder you specify on the server.</p>
+    <p>processes multiple documents from a specified directory. results are saved to the designated output directory.</p>
     
     <form id="batch-form" method="post">
         <div>
-            <label for="folder_path">1. Input folder path:</label>
+            <label for="folder_path">input directory path:</label>
             <input type="text" 
                    id="folder_path" 
                    name="folder_path" 
                    required 
-                   placeholder="Example: /Users/tu_usuario/Documents/Articulos">
+                   placeholder="/path/to/documents">
         </div>
         
         <div>
-            <label for="output_dir">2. Output folder path:</label>
+            <label for="output_dir">output directory path:</label>
             <input type="text" 
                    id="output_dir" 
                    name="output_dir" 
                    required 
-                   placeholder="Example: /Users/tu_usuario/Documents/Resultados">
+                   placeholder="/path/to/results">
         </div>
         
         <div>
-            <label for="file_extension">3. File type to process:</label>
+            <label for="file_extension">file format:</label>
             <select name="file_extension" id="file_extension" required>
-                <option value=".pdf">PDF (.pdf)</option>
-                <option value=".docx">Word (.docx)</option>
-                <option value=".txt">Texto (.txt)</option>
+                <option value=".pdf">pdf (.pdf)</option>
+                <option value=".docx">word document (.docx)</option>
+                <option value=".txt">plain text (.txt)</option>
             </select>
         </div>
         
         <div>
-            <label for="prompt_selection">4. Select a prompt:</label>
+            <label for="prompt_selection">analysis type:</label>
             <select name="prompt_selection" id="prompt_selection" required>
                 {% for prompt in prompts %}
                     <option value="{{ prompt }}">{{ prompt }}</option>
@@ -48,59 +48,59 @@
         </div>
         
         <div class="optional-fields">
-            <h3>Optional fields (only if used in the selected prompt)</h3>
+            <h3>additional parameters (if required by selected analysis)</h3>
             
             <div>
-                <label for="question">Question (optional):</label>
+                <label for="question">research question (optional):</label>
                 <input type="text" 
                        id="question" 
                        name="question" 
-                       placeholder="Enter a specific question if your prompt uses {question}">
+                       placeholder="specific research question">
             </div>
             
             <div>
-                <label for="theme">Theme (optional):</label>
+                <label for="theme">thematic focus (optional):</label>
                 <input type="text" 
                        id="theme" 
                        name="theme" 
-                       placeholder="Enter a theme if your prompt uses {theme}">
+                       placeholder="thematic area of interest">
             </div>
             
             <div>
-                <label for="keyword">Keyword (optional):</label>
+                <label for="keyword">keyword (optional):</label>
                 <input type="text" 
                        id="keyword" 
                        name="keyword" 
-                       placeholder="Enter a keyword if your prompt uses {keyword}">
+                       placeholder="specific term or concept">
             </div>
         </div>
         
         <div>
-            <label>6. Select AI Model:</label>
+            <label>processing model:</label>
             <div class="ai-model-buttons">
                 <button type="button" 
                         class="model-btn" 
                         data-model="claude" 
                         onclick="selectModel('claude')">
-                    Claude 4
+                    claude 4
                 </button>
                 <button type="button" 
                         class="model-btn selected" 
                         data-model="deepseek" 
                         onclick="selectModel('deepseek')">
-                    DeepSeek R1
+                    deepseek r1
                 </button>
                 <button type="button" 
                         class="model-btn" 
                         data-model="openai_o3" 
                         onclick="selectModel('openai_o3')">
-                    OpenAI O3
+                    openai o3
                 </button>
                 <button type="button" 
                         class="model-btn" 
                         data-model="openai_o4_mini" 
                         onclick="selectModel('openai_o4_mini')">
-                    OpenAI O4 Mini
+                    openai o4 mini
                 </button>
             </div>
             <input type="hidden" 
@@ -110,51 +110,56 @@
                    required>
         </div>
         
-        <button id="submit-button" type="submit">Start batch process</button>
+        <button id="submit-button" type="submit">start batch processing</button>
         
         <div id="loader">
-            Starting process... This may take several minutes. The page will notify you once it begins.
+            initiating batch process... this may take several minutes.
         </div>
     </form>
     
     <style>
         .optional-fields {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            margin: 20px 0;
+            background-color: #f9f9f9;
+            padding: 1.5em;
+            border-radius: 2px;
+            border: 1px solid var(--border-color);
+            margin: 1.5em 0;
         }
         
         .optional-fields h3 {
             margin-top: 0;
-            color: #6c757d;
-            font-size: 1.1em;
-            margin-bottom: 15px;
+            color: var(--secondary-color);
+            font-size: 1em;
+            margin-bottom: 1em;
+            font-weight: 400;
         }
         
         .ai-model-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin: 10px 0;
+            flex-wrap: wrap;
         }
         
         .model-btn {
-            padding: 10px 20px;
-            background-color: #f0f0f0;
-            border: 2px solid #ddd;
+            padding: 8px 16px;
+            background-color: #f5f5f5;
+            border: 1px solid var(--border-color);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            font-size: 0.9em;
+            border-radius: 2px;
+            font-family: var(--font-family);
         }
         
         .model-btn:hover {
-            background-color: #e0e0e0;
+            background-color: #e8e8e8;
         }
         
         .model-btn.selected {
-            background-color: #D9806C;
-            color: #F2F2F0;
-            border-color: #D97059;
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--secondary-color);
         }
     </style>
     
@@ -174,7 +179,7 @@
             
             if (!selectedModel) {
                 e.preventDefault();
-                alert('Please select an AI model before starting the batch process.');
+                alert('please select a processing model before starting batch process.');
             }
         });
     </script>
