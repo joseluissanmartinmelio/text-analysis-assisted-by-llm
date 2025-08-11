@@ -30,7 +30,7 @@ def get_openrouter_config() -> Dict[str, Any]:
         "api_key": api_key,
         "base_url": "https://openrouter.ai/api/v1",
         "headers": {
-            "HTTP-Referer": "http://localhost:5000",
+            "HTTP-Referer": "http://localhost:8000",
             "X-Title": "Text Analysis LLM Assistant",
         },
     }

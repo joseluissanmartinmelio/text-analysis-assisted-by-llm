@@ -4,6 +4,8 @@ import socket
 import sys
 import os
 import threading
+import subprocess
+import urllib.request
 from pathlib import Path
 
 if getattr(sys, "frozen", False):
@@ -21,7 +23,7 @@ def check_port(port):
     return result != 0
 
 
-def find_free_port(start_port=5000):
+def find_free_port(start_port=8000):
     port = start_port
     while port < 65535:
         if check_port(port):
@@ -31,8 +33,59 @@ def find_free_port(start_port=5000):
 
 
 def open_browser(port):
-    time.sleep(2)
-    webbrowser.open(f"http://localhost:{port}")
+    # Esperar más tiempo para que Flask esté completamente iniciado
+    time.sleep(5)  
+    url = f"http://localhost:{port}"
+    
+    # Verificar que el servidor esté realmente funcionando antes de abrir navegador
+    max_attempts = 10
+    for attempt in range(max_attempts):
+        try:
+            import urllib.request
+            urllib.request.urlopen(url, timeout=2)
+            break  # Servidor está listo
+        except Exception:
+            if attempt < max_attempts - 1:
+                time.sleep(1)  # Esperar 1 segundo más
+            else:
+                print("⚠ Servidor no responde, pero intentando abrir navegador...")
+    
+    success = False
+    
+    try:
+        # Intentar abrir con webbrowser estándar
+        webbrowser.open(url)
+        print(f"✓ Navegador abierto automáticamente: {url}")
+        success = True
+    except Exception as e:
+        print(f"⚠ Método webbrowser falló: {e}")
+        
+    # En Windows, intentar comandos alternativos si el primero falló
+    if not success and os.name == 'nt':  # Windows
+        try:
+            # Método 1: start con URL directa
+            subprocess.run(['cmd', '/c', 'start', '', url], check=False, shell=False)
+            print("✓ Intentando abrir con comando Windows start...")
+            success = True
+        except Exception as e1:
+            try:
+                # Método 2: powershell
+                subprocess.run(['powershell', '-Command', f'Start-Process "{url}"'], 
+                             check=False, shell=False)
+                print("✓ Intentando abrir con PowerShell...")
+                success = True
+            except Exception as e2:
+                try:
+                    # Método 3: usando os.system como último recurso
+                    os.system(f'start "" "{url}"')
+                    print("✓ Intentando con os.system...")
+                    success = True
+                except Exception as e3:
+                    print(f"⚠ Todos los métodos fallaron: {e1}, {e2}, {e3}")
+    
+    if not success:
+        print(f"📌 IMPORTANTE: Abre manualmente en tu navegador: {url}")
+        print("   Copia y pega esta URL en tu navegador preferido.")
 
 
 def setup_config():
@@ -60,58 +113,108 @@ def setup_config():
 
 
 def main():
-    print(
+    try:
+        is_packaged = getattr(sys, "frozen", False)
+        
+        print(
+            """
+        ╔════════════════════════════════════════════╗
+        ║     Llm assistant by José San Martin       ║
+        ╚════════════════════════════════════════════╝
         """
-    ╔════════════════════════════════════════════╗
-    ║     Llm assistant by José San Martin       ║
-    ╚════════════════════════════════════════════╝
-    """
-    )
+        )
+        
+        if is_packaged:
+            print("🔧 Ejecutando desde ejecutable empaquetado")
+        else:
+            print("🔧 Ejecutando desde código fuente")
 
-    setup_config()
+        setup_config()
 
-    port = find_free_port()
-    if not port:
-        print("Could not find an available port")
+        port = find_free_port()
+        if not port:
+            print("❌ ERROR: Could not find an available port")
+            input("Press Enter to exit...")
+            sys.exit(1)
+
+        print(f"✅ Puerto encontrado: {port}")
+        print(f"🌐 La aplicación estará disponible en: http://localhost:{port}")
+        print(f"⏳ Preparando Flask...")
+
+        os.environ["FLASK_PORT"] = str(port)
+
+        sys.path.insert(0, str(BASE_DIR))
+        sys.path.insert(0, str(BASE_DIR / "src"))
+
+        os.chdir(BASE_DIR)
+
+        try:
+            from app_wrapper import app
+            print("✓ Using optimized configuration for packaging")
+        except ImportError as e:
+            print(f"⚠ app_wrapper import failed: {e}")
+            try:
+                from app import app
+                print("✓ Using original app.py")
+            except ImportError as e2:
+                print(f"❌ ERROR: No se pudo importar ni app_wrapper ni app: {e2}")
+                input("Press Enter to exit...")
+                sys.exit(1)
+
+        app.config["SECRET_KEY"] = "secret-bot-kla"
+
+        print("🌐 Iniciando hilo para abrir navegador...")
+        browser_thread = threading.Thread(target=open_browser, args=(port,))
+        browser_thread.daemon = True
+        browser_thread.start()
+
+        print(f"\n🚀 SERVIDOR FLASK INICIANDO EN PUERTO: {port}")
+        print(f"📍 URL COMPLETA: http://localhost:{port}")
+        print("\n Available routes:")
+        print(f"   - Individual analysis: http://localhost:{port}/")
+        print(f"   - Batch processing: http://localhost:{port}/batch")
+        print("\nTo stop the server, close this window or press Ctrl+C.")
+        print("\n" + "="*60)
+        if getattr(sys, "frozen", False):
+            print("🖥️  EJECUTABLE WINDOWS - INSTRUCCIONES:")
+            print("   • El navegador debería abrirse automáticamente")
+            print("   • Si no se abre, Windows puede estar bloqueándolo")
+            print("   • Solución: Copia esta URL manualmente:")
+        else:
+            print("🌐 Si el navegador no se abrió automáticamente:")
+            print("   Copia esta URL en tu navegador:")
+        print(f"   👉 http://localhost:{port}")
+        print("="*60 + "\n")
+
+        try:
+            print("🔥 INICIANDO SERVIDOR FLASK...")
+            app.run(host="127.0.0.1", port=port, debug=False, use_reloader=False)
+        except Exception as e:
+            print(f"❌ ERROR AL INICIAR SERVIDOR: {e}")
+            input("Press Enter to exit...")
+        except KeyboardInterrupt:
+            print("\n\n✅ Server stopped correctly")
+            time.sleep(1)
+            
+    except Exception as e:
+        print(f"❌ ERROR EN MAIN: {e}")
+        import traceback
+        traceback.print_exc()
         input("Press Enter to exit...")
-        sys.exit(1)
-
-    print(f"Starting server on port {port}...")
-
-    os.environ["FLASK_PORT"] = str(port)
-
-    sys.path.insert(0, str(BASE_DIR))
-    sys.path.insert(0, str(BASE_DIR / "src"))
-
-    os.chdir(BASE_DIR)
-
-    browser_thread = threading.Thread(target=open_browser, args=(port,))
-    browser_thread.daemon = True
-    browser_thread.start()
-
-    try:
-        from app_wrapper import app
-
-        print("Using optimized configuration for packaging")
-    except ImportError:
-        from app import app
-
-        print("Using original app.py")
-
-    app.config["SECRET_KEY"] = "secret-bot-kla"
-
-    print(f"\n Application running on: http://localhost:{port}")
-    print("\n Available routes:")
-    print(f"   - Individual analysis: http://localhost:{port}/")
-    print(f"   - Batch processing: http://localhost:{port}/batch")
-    print("\nTo stop the server, close this window or press Ctrl+C.\n")
-
-    try:
-        app.run(host="127.0.0.1", port=port, debug=False, use_reloader=False)
-    except KeyboardInterrupt:
-        print("\n\n Server stopped correctly")
-        time.sleep(1)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(f"\n❌ ERROR CRÍTICO: {e}")
+        print(f"Tipo de error: {type(e).__name__}")
+        import traceback
+        print("\nDetalle completo del error:")
+        traceback.print_exc()
+        print("\n" + "="*50)
+        print("Presiona Enter para cerrar...")
+        input()
+    except KeyboardInterrupt:
+        print("\n✅ Aplicación cerrada por el usuario")
+        input("Presiona Enter para cerrar...")

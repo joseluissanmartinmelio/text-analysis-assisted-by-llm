@@ -78,11 +78,11 @@ OPENROUTER_API_KEY=tu_clave_aqui
 python app.py
 ```
 
-la aplicación se abrirá en http://localhost:5000
+la aplicación se abrirá en http://localhost:8000
 
 ### análisis de un documento individual
 
-1. abre tu navegador en http://localhost:5000
+1. abre tu navegador en http://localhost:8000
 2. selecciona un archivo (pdf, docx o txt)
 3. elige un prompt de análisis
 4. selecciona el modelo de ia
@@ -91,7 +91,7 @@ la aplicación se abrirá en http://localhost:5000
 
 ### procesamiento en lote
 
-1. ve a http://localhost:5000/batch
+1. ve a http://localhost:8000/batch
 2. ingresa la ruta de la carpeta con documentos
 3. ingresa la ruta donde guardar resultados
 4. selecciona el tipo de archivo (.pdf, .docx, .txt)

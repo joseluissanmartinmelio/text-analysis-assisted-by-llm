@@ -24,6 +24,7 @@ Writing guidelines:
 - Maximum 300 tokens for the entire summary
 - Respond in Spanish
 - Use only information explicitly present in the article; do not add external knowledge
+- Respond in Spanish
 
 Note: You will only show the final paragraphs, not the systematic extraction process.
 
