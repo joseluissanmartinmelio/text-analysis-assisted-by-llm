@@ -14,7 +14,7 @@ def extract_text_without_footer_header(pdf_path):
         for block in blocks:
             x0, y0, x1, y1, text, *_ = block
 
-            if y0 < page_height * 0.07:
+            if y0 < page_height * 0.00:
                 continue
 
             page_text.append(text.strip())

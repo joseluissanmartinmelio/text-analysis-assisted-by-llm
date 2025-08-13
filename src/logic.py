@@ -2,6 +2,7 @@ import os
 import time
 import textwrap
 from pathlib import Path
+import pypandoc
 from src.pdf_reader import extract_text_without_footer_header as extract_text_pdf
 from src.docx_reader import extract_text_without_footer_header as extract_text_docx
 from src.txt_reader import extract_text_without_footer_header as extract_text_txt
@@ -89,7 +90,7 @@ def select_extractor(extension: str):
 
 
 def build_output_path(input_file: Path, output_dir: Path) -> Path:
-    return output_dir / f"{input_file.stem}_ia_response.md"
+    return output_dir / f"{input_file.stem}.md"
 
 
 def process_single_file_batch(
@@ -173,3 +174,97 @@ def process_folder_batch(
 
     print(summary)
     return summary
+
+
+def create_consolidated_markdown(source_path, output_file):
+    """
+    Consolida todos los archivos .md de un directorio en un solo archivo markdown
+    """
+    source_dir = Path(source_path)
+    if not source_dir.is_dir():
+        raise FileNotFoundError(f"Error: The directory '{source_path}' does not exist.")
+
+    markdown_files = sorted(
+        [f for f in source_dir.glob("*.md") if f.name != Path(output_file).name]
+    )
+
+    if not markdown_files:
+        raise FileNotFoundError(f"No .md files found in '{source_path}'.")
+
+    print(f".md files found: {[f.name for f in markdown_files]}")
+
+    with open(output_file, "w", encoding="utf-8") as outfile:
+        for md_file in markdown_files:
+            print(f"Processing: {md_file.name}")
+            
+            title = md_file.stem
+            
+            outfile.write(f"# {title}\n\n")
+            outfile.write(md_file.read_text(encoding="utf-8"))
+            outfile.write("\n\n---\n\n")
+
+    print(f"\nConsolidated file '{output_file}' created successfully.")
+    return True
+
+
+def convert_markdown_to_pdf(md_file, pdf_file):
+    """
+    Convierte un archivo markdown a PDF usando pypandoc
+    """
+    print(f"Starting conversion from '{md_file}' to '{pdf_file}'...")
+    try:
+        pypandoc.convert_file(
+            md_file,
+            "pdf",
+            outputfile=pdf_file,
+            extra_args=["--pdf-engine=xelatex", "-V", "geometry:margin=1in"],
+        )
+        print(f"PDF file '{pdf_file}' created successfully.")
+        return True
+    except OSError:
+        raise OSError(
+            "Could not find 'pandoc'. Please install pandoc on your system to generate the PDF. "
+            "On Windows, download from https://pandoc.org/installing.html"
+        )
+    except Exception as e:
+        raise Exception(f"An error occurred during PDF conversion: {e}")
+
+
+def unify_markdowns_and_create_pdf(output_dir):
+    """
+    Función principal que unifica todos los markdowns de un directorio y genera un PDF
+    """
+    output_path = Path(output_dir)
+    if not output_path.is_dir():
+        raise FileNotFoundError(f"Output directory does not exist: {output_dir}")
+    
+    consolidated_md_file = output_path / "consolidated_analysis.md"
+    consolidated_pdf_file = output_path / "consolidated_analysis.pdf"
+    
+    # Crear el markdown consolidado
+    create_consolidated_markdown(str(output_path), str(consolidated_md_file))
+    
+    # Intentar crear el PDF
+    try:
+        convert_markdown_to_pdf(str(consolidated_md_file), str(consolidated_pdf_file))
+        return {
+            "success": True,
+            "markdown_file": str(consolidated_md_file),
+            "pdf_file": str(consolidated_pdf_file),
+            "message": "Consolidated markdown and PDF created successfully"
+        }
+    except OSError as e:
+        # Si falla el PDF por falta de pandoc, al menos devolvemos el markdown
+        return {
+            "success": True,
+            "markdown_file": str(consolidated_md_file),
+            "pdf_file": None,
+            "message": f"Consolidated markdown created successfully. PDF generation failed: {str(e)}"
+        }
+    except Exception as e:
+        return {
+            "success": True,
+            "markdown_file": str(consolidated_md_file),
+            "pdf_file": None,
+            "message": f"Consolidated markdown created successfully. PDF generation failed: {str(e)}"
+        }

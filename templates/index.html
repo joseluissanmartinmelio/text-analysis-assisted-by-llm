@@ -3,19 +3,19 @@
 
 {% extends "base.html" %}
 
-{% block title %}single file analysis{% endblock %}
+{% block title %}Análisis de pdf único{% endblock %}
 
 {% block content %}
-    <h1>document analysis tool</h1>
+    <h1>Herramienta de análisis de documentos</h1>
     
     <form id="analysis-form" method="post" enctype="multipart/form-data">
         <div>
-            <label for="document">upload document (.pdf, .docx, .txt):</label>
+            <label for="document">Subir documento (.pdf, .docx, .txt):</label>
             <input type="file" id="document" name="document" required>
         </div>
         
         <div>
-            <label for="prompt_selection">select analysis type:</label>
+            <label for="prompt_selection">Seleccionar tipo de análisis:</label>
             <select name="prompt_selection" id="prompt_selection" required>
                 {% for prompt in prompts %}
                     <option value="{{ prompt }}">{{ prompt }}</option>
@@ -24,10 +24,10 @@
         </div>
         
         <div class="optional-fields">
-            <h3>additional parameters (if required by selected analysis)</h3>
+            <h3>Parámetros adicionales (si son requeridos por el análisis seleccionado)</h3>
             
             <div>
-                <label for="question">research question (optional):</label>
+                <label for="question">Pregunta de investigación (opcional):</label>
                 <input type="text" 
                        id="question" 
                        name="question" 
@@ -35,7 +35,7 @@
             </div>
             
             <div>
-                <label for="theme">thematic focus (optional):</label>
+                <label for="theme">Foco temático (opcional):</label>
                 <input type="text" 
                        id="theme" 
                        name="theme" 
@@ -43,7 +43,7 @@
             </div>
             
             <div>
-                <label for="keyword">keyword (optional):</label>
+                <label for="keyword">Palabras clave (opcional):</label>
                 <input type="text" 
                        id="keyword" 
                        name="keyword" 
@@ -52,7 +52,7 @@
         </div>
         
         <div>
-            <label>processing model:</label>
+            <label>Modelo de procesamiento:</label>
             <div class="ai-model-buttons">
                 <button type="button" 
                         class="model-btn" 
@@ -86,19 +86,19 @@
                    required>
         </div>
         
-        <button id="submit-button" type="submit">analyze document</button>
+        <button id="submit-button" type="submit">Analiza el documento</button>
         
-        <div id="loader">processing document...</div>
+        <div id="loader">procesando documento...</div>
     </form>
     
     {% if results %}
         <div class="results">
-            <h2>analysis results</h2>
+            <h2>Resultados del análisis</h2>
             
-            <h3>processed output</h3>
+            <h3>Salida procesada</h3>
             <pre>{{ results.ai_response }}</pre>
             
-            <h3>output metrics</h3>
+            <h3>Métricas de salida</h3>
             <p>
                 <strong>total words:</strong> {{ results.response_stats.total }} | 
                 <strong>unique words:</strong> {{ results.response_stats.unique }}
@@ -106,10 +106,10 @@
             
             <br>
             
-            <h3>source text</h3>
+            <h3>Source text</h3>
             <pre>{{ results.extracted_text }}</pre>
             
-            <h3>source metrics</h3>
+            <h3>Source metrics</h3>
             <p>
                 <strong>total words:</strong> {{ results.text_stats.total }} | 
                 <strong>unique words:</strong> {{ results.text_stats.unique }}

@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, jsonify
 import os
-from src.logic import run_analysis, process_folder_batch
+from src.logic import run_analysis, process_folder_batch, unify_markdowns_and_create_pdf
 
 app = Flask(__name__)
 app.secret_key = "secret-bot-kla"
@@ -79,6 +79,40 @@ def batch_process():
             return redirect(url_for("batch_process"))
 
     return render_template("batch.html", prompts=prompt_files)
+
+
+@app.route("/unify-markdowns", methods=["POST"])
+def unify_markdowns():
+    """
+    Endpoint para unificar archivos markdown de un directorio en un solo archivo y generar PDF
+    """
+    try:
+        data = request.get_json()
+        output_dir = data.get("output_dir")
+        
+        if not output_dir:
+            return jsonify({
+                "success": False, 
+                "message": "No output directory specified"
+            }), 400
+        
+        result = unify_markdowns_and_create_pdf(output_dir)
+        
+        if result["success"]:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 500
+            
+    except FileNotFoundError as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 404
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error during unification: {str(e)}"
+        }), 500
 
 
 if __name__ == "__main__":

@@ -6,14 +6,14 @@
 {% block title %}batch processing{% endblock %}
 
 {% block content %}
-    <h1>batch document processing</h1>
+    <h1>Procesamiento por lotes de documentos</h1>
     
-    <p>processes multiple documents from a specified directory. results are saved to the designated output directory.</p>
+    <p>Procesa múltiples documentos desde un directorio especificado. Los resultados se guardan en el directorio de salida designado.</p>
     
     <form id="batch-form" method="post">
         <div>
-            <label for="folder_path">input directory path:</label>
-            <input type="text" 
+            <label for="folder_path">Ruta del directorio de entrada:</label>
+            <input type="text"
                    id="folder_path" 
                    name="folder_path" 
                    required 
@@ -21,7 +21,7 @@
         </div>
         
         <div>
-            <label for="output_dir">output directory path:</label>
+            <label for="output_dir">Ruta del directorio de salida:</label>
             <input type="text" 
                    id="output_dir" 
                    name="output_dir" 
@@ -30,16 +30,16 @@
         </div>
         
         <div>
-            <label for="file_extension">file format:</label>
+            <label for="file_extension">Formato de archivo:</label>
             <select name="file_extension" id="file_extension" required>
                 <option value=".pdf">pdf (.pdf)</option>
-                <option value=".docx">word document (.docx)</option>
-                <option value=".txt">plain text (.txt)</option>
+                <option value=".docx">documento de Word (.docx)</option>
+                <option value=".txt">texto sin formato (.txt)</option>
             </select>
         </div>
         
         <div>
-            <label for="prompt_selection">analysis type:</label>
+            <label for="prompt_selection">Tipo de análisis:</label>
             <select name="prompt_selection" id="prompt_selection" required>
                 {% for prompt in prompts %}
                     <option value="{{ prompt }}">{{ prompt }}</option>
@@ -48,10 +48,10 @@
         </div>
         
         <div class="optional-fields">
-            <h3>additional parameters (if required by selected analysis)</h3>
+            <h3>Additional parameters (if required by selected analysis)</h3>
             
             <div>
-                <label for="question">research question (optional):</label>
+                <label for="question">Pregunta de investigación (opcional):</label>
                 <input type="text" 
                        id="question" 
                        name="question" 
@@ -59,7 +59,7 @@
             </div>
             
             <div>
-                <label for="theme">thematic focus (optional):</label>
+                <label for="theme">Foco temático (opcional):</label>
                 <input type="text" 
                        id="theme" 
                        name="theme" 
@@ -67,7 +67,7 @@
             </div>
             
             <div>
-                <label for="keyword">keyword (optional):</label>
+                <label for="keyword">Palabras clave (opcional):</label>
                 <input type="text" 
                        id="keyword" 
                        name="keyword" 
@@ -76,7 +76,7 @@
         </div>
         
         <div>
-            <label>processing model:</label>
+            <label>Modelo de procesamiento:</label>
             <div class="ai-model-buttons">
                 <button type="button" 
                         class="model-btn" 
@@ -110,12 +110,36 @@
                    required>
         </div>
         
-        <button id="submit-button" type="submit">start batch processing</button>
+        <button id="submit-button" type="submit">Comienzo del proceso por lotes</button>
         
         <div id="loader">
-            initiating batch process... this may take several minutes.
+            iniciando el proceso por lotes... esto puede tardar varios minutos.
         </div>
     </form>
+    
+    <!-- Sección para unificar markdowns -->
+    <div id="unify-section" style="margin-top: 2em; padding-top: 2em; border-top: 1px solid var(--border-color);">
+        <h2>Consolidar resultados del análisis</h2>
+        <p>Después de completar el procesamiento por lotes, puedes consolidar todos los archivos markdown generados en un solo documento y, opcionalmente, generar un PDF.</p>
+
+        <div>
+            <label for="unify_output_dir">Directorio de salida (donde se encuentran los archivos markdown):</label>
+            <input type="text" 
+                   id="unify_output_dir" 
+                   name="unify_output_dir" 
+                   placeholder="/path/to/results">
+        </div>
+        
+        <button id="unify-button" type="button" onclick="unifyMarkdowns()">
+            Consolidar archivos markdown y generar pdf
+        </button>
+        
+        <div id="unify-loader" style="display: none;">
+            Consolidando archivos markdown...
+        </div>
+        
+        <div id="unify-result" style="display: none; margin-top: 1em;"></div>
+    </div>
     
     <style>
         .optional-fields {
@@ -161,6 +185,58 @@
             color: white;
             border-color: var(--secondary-color);
         }
+        
+        #unify-button {
+            padding: 12px 24px;
+            font-size: 0.95em;
+            font-weight: 400;
+            color: white;
+            background-color: var(--secondary-color);
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 1em;
+        }
+        
+        #unify-button:hover {
+            background-color: #555555;
+        }
+        
+        #unify-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        #unify-loader {
+            text-align: center;
+            padding: 12px;
+            font-size: 0.9em;
+            font-weight: 400;
+            color: var(--secondary-color);
+            background-color: #f5f5f5;
+            border-radius: 2px;
+            border: 1px solid var(--border-color);
+            margin-top: 1em;
+        }
+        
+        #unify-result {
+            padding: 12px;
+            border-radius: 2px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .success-result {
+            background-color: #f0f4f0;
+            color: #2d5a2d;
+            border-color: #b8d4b8;
+        }
+        
+        .error-result {
+            background-color: #f4f0f0;
+            color: #5a2d2d;
+            border-color: #d4b8b8;
+        }
     </style>
     
     <script>
@@ -179,8 +255,78 @@
             
             if (!selectedModel) {
                 e.preventDefault();
-                alert('please select a processing model before starting batch process.');
+                alert('por favor selecciona un modelo de procesamiento antes de iniciar el proceso por lotes.');
+                return;
             }
+            
+            // Mostrar la sección de unificación después de enviar el formulario
+            // setTimeout(function() {
+            //     document.getElementById('unify-section').style.display = 'block';
+            //     // Auto-llenar el directorio de salida si está disponible
+            //     const outputDir = document.getElementById('output_dir').value;
+            //     if (outputDir) {
+            //         document.getElementById('unify_output_dir').value = outputDir;
+            //     }
+            // }, 1000);
         });
+        
+        async function unifyMarkdowns() {
+            const outputDir = document.getElementById('unify_output_dir').value.trim();
+            
+            if (!outputDir) {
+                alert('Por favor especifica el directorio de salida donde se encuentran los archivos markdown.');
+                return;
+            }
+            
+            const unifyButton = document.getElementById('unify-button');
+            const unifyLoader = document.getElementById('unify-loader');
+            const unifyResult = document.getElementById('unify-result');
+            
+            // Mostrar loader y deshabilitar botón
+            unifyButton.disabled = true;
+            unifyLoader.style.display = 'block';
+            unifyResult.style.display = 'none';
+            
+            try {
+                const response = await fetch('/unify-markdowns', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        output_dir: outputDir
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Ocultar loader
+                unifyLoader.style.display = 'none';
+                unifyResult.style.display = 'block';
+                
+                if (result.success) {
+                    unifyResult.className = 'success-result';
+                    let message = `<strong>Finalizado</strong><br>${result.message}<br>`;
+                    message += `<br><strong>Archivo consolidado:</strong> ${result.markdown_file}`;
+                    if (result.pdf_file) {
+                        message += `<br><strong>Archivo PDF:</strong> ${result.pdf_file}`;
+                    }
+                    unifyResult.innerHTML = message;
+                } else {
+                    unifyResult.className = 'error-result';
+                    unifyResult.innerHTML = `<strong>Error:</strong> ${result.message}`;
+                }
+                
+            } catch (error) {
+                // Ocultar loader
+                unifyLoader.style.display = 'none';
+                unifyResult.style.display = 'block';
+                unifyResult.className = 'error-result';
+                unifyResult.innerHTML = `<strong>Error:</strong> Failed to communicate with server. ${error.message}`;
+            } finally {
+                // Rehabilitar botón
+                unifyButton.disabled = false;
+            }
+        }
     </script>
 {% endblock %}

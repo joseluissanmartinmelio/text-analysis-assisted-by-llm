@@ -20,7 +20,7 @@ if __name__ == "__main__":
     # txt_path = f"{author_year}.txt" # to read txt files
     # docx_path = f"{author_year}.docx" # to read docx files
     output_path = f""
-    prompt_path = f"{author_year}_ia_response.md"
+    prompt_path = f"{author_year}.md"
 
     # text = extract_text_txt(txt_path) # to read txt files
     text = extract_text_pdf(pdf_path)  # to read pdf files

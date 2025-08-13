@@ -1,7 +1,7 @@
 from openai import OpenAI
 import os
 
-api_key = os.environ.get("OPENROUTER_API_KEY")
+api_key = ""
 
 base_url = "https://openrouter.ai/api/v1"
 
